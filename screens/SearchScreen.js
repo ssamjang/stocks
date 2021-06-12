@@ -14,20 +14,24 @@ import { scaleSize } from '../constants/Layout';
 import { Ionicons } from '@expo/vector-icons';
 
 
-export const SymbolContainer = (data) => {
-  const dataVal = Object.values(data)
-  const dataList = dataVal[0]
-  // sort list by symbol
-  const dataSorted = dataList.sort((a,b) => (a.symbol > b.symbol) ? 1:-1)
+export const SymbolContainer = ({data, navigation}) => {
+  // const dataVal = Object.values(data)
+  // const dataList = dataVal[0]
+  // // sort list by symbol
+  const dataSorted = data.sort((a,b) => (a.symbol > b.symbol) ? 1:-1)
 
   return(    
     <View>
-      {/* {console.log(data)} */}
+      {/* {console.log(dataSorted)} */}
       <FlatList
+        // data={dataSorted}
         data={dataSorted}
         renderItem={({item}) => (
           <TouchableHighlight 
             style={styles.stockItem}
+            onPress={() => {
+              navigation.navigate("Stocks")
+            }}
           >
             <View>
               <Text style={styles.symbol}>{item.symbol}</Text>
@@ -108,6 +112,7 @@ export default function SearchScreen({ navigation }) {
         </View>
         <SymbolContainer 
           data={filteredData}
+          navigation={navigation}
         >
         </SymbolContainer>
       </View>
