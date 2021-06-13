@@ -14,7 +14,7 @@ import { scaleSize } from '../constants/Layout';
 import { Ionicons } from '@expo/vector-icons';
 
 
-export const SymbolContainer = ({data, navigation}) => {
+export const SymbolContainer = ({data, navigation, watchList}) => {
   // const dataVal = Object.values(data)
   // const dataList = dataVal[0]
   // // sort list by symbol
@@ -30,7 +30,8 @@ export const SymbolContainer = ({data, navigation}) => {
           <TouchableHighlight 
             style={styles.stockItem}
             onPress={() => {
-              navigation.navigate("Stocks")
+              navigation.navigate("Stocks");
+              watchList(item.symbol)
             }}
           >
             <View>
@@ -113,6 +114,7 @@ export default function SearchScreen({ navigation }) {
         <SymbolContainer 
           data={filteredData}
           navigation={navigation}
+          watchList={addToWatchlist}
         >
         </SymbolContainer>
       </View>
