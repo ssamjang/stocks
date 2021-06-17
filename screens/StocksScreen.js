@@ -10,32 +10,29 @@ const API_KEY = '?apikey=7a453ad3eab49ac22bc22d18dd2675bb'
 
 const detailAPI = 'https://financialmodelingprep.com/api/v3/historical-price-full/';
 
-// FixMe: implement other components and functions used in StocksScreen here (don't just put all the JSX in StocksScreen below)
-
 export const StockContainer = ({watchList, state, loading}) => {
-  // if (watchList.symbols && (Object.keys(state).length > 0)) {
-  // if (watchList.symbols && state !== null) {
   if (state === null) {
     console.log('loading fail NULL')
     return <Text style={styles.symbols}>LOADING</Text>
   } else if (Object.keys(state).length === watchList.symbols.length){
-    // console.log("container data===----------START-----")
-      // console.log(state)
-      // console.log("container data===-----------END---")
       return(
         <FlatList
           data={watchList.symbols}
           renderItem={({item}) => (
-            <View>
+            <View style={styles.stockDetail}>
               <Text style={styles.symbol}>
                 {item}
-                {console.log('-----------------inside----------START--')}
+                {/* {console.log('-----------------inside----------START--')}
                 {console.log(item)}
                 {console.log(state)}
-                {/* {console.log(state[item].close)} */}
-                {console.log('-----------------inside---------END--')}
+                {console.log('-----------------inside---------END--')} */}
+                {/* {state[item].close} */}
+              </Text>
+              <Text style={styles.symbol}>
                 {state[item].close}
-                
+              </Text>
+              <Text style={styles.symbol}>
+                {state[item].changePercent}
               </Text>
             </View>
           )}
@@ -89,13 +86,7 @@ export default function StocksScreen({route}) {
               let mergedData = {}
               newData[symbol] = data.historical[0]
               mergedData = {...state, ...newData}
-              // setState({...state, ...newData})
-              // console.log("MERGED DATA START")
-              // console.log(mergedData)
-              // console.log(typeof(mergedData))
-              // console.log("MERGED DATA END")
               return mergedData
-              //console.log(state)
             }))
             .then(data => {
               // setState((oldState) => ({ ...oldState, data}))
@@ -138,9 +129,19 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       paddingVertical: 10,
     },
+    stockDetail: {
+      flex: 1,
+      flexDirection: "row",
+      color: "#fff",
+      fontSize: scaleSize(30),
+      padding: 10,
+      // justifyContent: "",
+    }
+    ,
     symbol: {
       color: "#fff",
       fontSize: scaleSize(30),
+      flex: 1,
     },
     test: {
       backgroundColor: '#DDDD',
