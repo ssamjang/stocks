@@ -24,7 +24,6 @@ export const useStocksContext = () => {
   function addToWatchlist(newSymbol) {
     //FixMe: add the new symbol to the watchlist, save it in useStockContext state and persist to AsyncStorage
     if (state.symbols && state.symbols.length > 0) { 
-      // check if symbol exists in the state already
       if (state.symbols && state.symbols.indexOf(newSymbol) >=0){
         return;
       } else {
@@ -66,7 +65,9 @@ export const useStocksContext = () => {
 
   return { 
     //ServerURL: 'http://131.181.190.87:3001', 
-    ServerURL: 'https://financialmodelingprep.com/api/v3/nasdaq_constituent?apikey=b888e1d7c9684be0722f58f601b0f582', 
+    // ServerURL: 'https://financialmodelingprep.com/api/v3/nasdaq_constituent?apikey=b888e1d7c9684be0722f58f601b0f582',
+    // ServerURL: 'https://financialmodelingprep.com/api/v3/nasdaq_constituent?apikey=15b6b386127d855314ed8c99bff64f8a',
+    ServerURL: 'https://financialmodelingprep.com/api/v3/nasdaq_constituent?apikey=7a453ad3eab49ac22bc22d18dd2675bb',
     watchList: state,  
     addToWatchlist,
     selectStock };

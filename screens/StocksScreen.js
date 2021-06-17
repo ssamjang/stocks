@@ -4,55 +4,127 @@ TouchableOpacity, AsyncStorage, FlatList} from 'react-native';
 import { useStocksContext } from '../contexts/StocksContext';
 import { scaleSize } from '../constants/Layout';
 
+// const API_KEY = '?apikey=b888e1d7c9684be0722f58f601b0f582'
+//const API_KEY = '?apikey=15b6b386127d855314ed8c99bff64f8a'
+const API_KEY = '?apikey=7a453ad3eab49ac22bc22d18dd2675bb'
+
+const detailAPI = 'https://financialmodelingprep.com/api/v3/historical-price-full/';
+
 // FixMe: implement other components and functions used in StocksScreen here (don't just put all the JSX in StocksScreen below)
 
-export const StockContainer = ({watchList}) => {
-  if (watchList.symbols) {
-    return(
-      <FlatList
-        data={watchList.symbols}
-        renderItem={({item}) => (
-          <View>
-            <Text style={styles.test}>
-              {item}
-            </Text>
-          </View>
-        )}
-        keyExtractor={item=>item}
-      />
-    )
+export const StockContainer = ({watchList, state, loading}) => {
+  // if (watchList.symbols && (Object.keys(state).length > 0)) {
+  // if (watchList.symbols && state !== null) {
+  if (state === null) {
+    console.log('loading fail NULL')
+    return <Text style={styles.symbols}>LOADING</Text>
+  } else if (Object.keys(state).length === watchList.symbols.length){
+    // console.log("container data===----------START-----")
+      // console.log(state)
+      // console.log("container data===-----------END---")
+      return(
+        <FlatList
+          data={watchList.symbols}
+          renderItem={({item}) => (
+            <View>
+              <Text style={styles.symbol}>
+                {item}
+                {console.log('-----------------inside----------START--')}
+                {console.log(item)}
+                {console.log(state)}
+                {/* {console.log(state[item].close)} */}
+                {console.log('-----------------inside---------END--')}
+                {state[item].close}
+                
+              </Text>
+            </View>
+          )}
+          keyExtractor={item=>item}
+        />
+      )
+    } else {
+      console.log('loading fail END')
+
+      return <Text style={styles.symbols}>LOADING EEEEEND</Text>
+    }   
   }
-}
+
+
 
 export default function StocksScreen({route}) {
   const { ServerURL, watchList } = useStocksContext();
-  const [state, setState] = useState({ /* FixMe: initial state here */ });
+  const [state, setState] = useState({});
+  const [loading, setLoading] = useState(true)
 
   const clearStorage = () => {
-    watchList.symbols.pop()
+
+    while(watchList.symbols.length) {
+    let item = watchList.symbols.pop()
+    console.log(item)
+    }
+    // watchList.symbols.pop()
     console.log(watchList.symbols)
+    AsyncStorage.clear()
+    setState({})
   };
 
 
-  // can put more code here
+
 
   useEffect(() => {
-    // FixMe: fetch stock data from the server for any new symbols added to the watchlist and save in local StocksScreen state  
-  }, [watchList]);
+    if (watchList && watchList.symbols) {
+      // console.log(watchList)
+      watchList.symbols.forEach((symbol) => {
+        AsyncStorage.getItem("stockData")
+          .then((stocks) => JSON.parse(stocks))
+          .then((stockInfo) => {
+            // setState((oldState) => ({...oldState, stockInfo}))
+            setState(stockInfo)
+          });
+        if (!state[symbol]) {
+          fetch(`${detailAPI}${symbol}${API_KEY}`)
+            .then((res) => res.json())
+            .then((data => {
+              let newData = {}
+              let mergedData = {}
+              newData[symbol] = data.historical[0]
+              mergedData = {...state, ...newData}
+              // setState({...state, ...newData})
+              // console.log("MERGED DATA START")
+              // console.log(mergedData)
+              // console.log(typeof(mergedData))
+              // console.log("MERGED DATA END")
+              return mergedData
+              //console.log(state)
+            }))
+            .then(data => {
+              // setState((oldState) => ({ ...oldState, data}))
+              setState(data)
+              AsyncStorage.setItem("stockData", JSON.stringify(data))
+              setLoading(false)
+            })
+            .catch((err) => {
+              throw new Error("Stock info fetch failed: ", err)
+            })
+            // console.log("STATE STARRRRRT-----------------------------")
+            // console.log(state)
+            // console.log("STATE END-----------------------------")
+          }
+      });
+    };
+  }, [watchList])
 
   return (
-
     <View style={styles.container}>
-        {/* FixMe: add children here! */ }
-        <Text style={styles.test}>
-          STOCKS 2222222
+        <Text style={styles.header}>
+          Stocks
         </Text>
         <TouchableOpacity
           onPress={() => clearStorage()}
         >
           <Text style={styles.test}>CLEAR STORAGE</Text>
         </TouchableOpacity>
-        <StockContainer watchList={watchList}/>
+        <StockContainer watchList={watchList} state={state} loading={loading}/>
     </View>
   );
 }
@@ -60,10 +132,20 @@ export default function StocksScreen({route}) {
 const styles = StyleSheet.create({
   // FixMe: add styles here ...
   // use scaleSize(x) to adjust sizes for small/large screens
+    header: {
+      color: "#fff",
+      fontSize: scaleSize(30),
+      textAlign: 'center',
+      paddingVertical: 10,
+    },
+    symbol: {
+      color: "#fff",
+      fontSize: scaleSize(30),
+    },
     test: {
       backgroundColor: '#DDDD',
       alignContent: 'center',
       color: 'black',
       fontSize: 60
-    }
+    },
   });

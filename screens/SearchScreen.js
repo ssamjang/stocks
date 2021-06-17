@@ -24,7 +24,6 @@ export const SymbolContainer = ({data, navigation, watchList}) => {
     <View>
       {/* {console.log(dataSorted)} */}
       <FlatList
-        // data={dataSorted}
         data={dataSorted}
         renderItem={({item}) => (
           <TouchableHighlight 
@@ -48,7 +47,7 @@ export const SymbolContainer = ({data, navigation, watchList}) => {
 }
 
 export default function SearchScreen({ navigation }) {
-  const { ServerURL, addToWatchlist } = useStocksContext();
+  const { ServerURL, addToWatchlist, watchList } = useStocksContext();
    const [rawData, setRawData] = useState([])
    const [filteredData, setFilteredData] = useState([])
    const [search, setSearch] = useState('')
@@ -90,7 +89,7 @@ export default function SearchScreen({ navigation }) {
   }
 
   useEffect(() => {
-    // fetch stock data from the server and save in local SearchScreen state
+
     AsyncStorage.getItem("rawData")
       .then((stocks) => JSON.parse(stocks), getStockData())
       .then((parsedData) => {
