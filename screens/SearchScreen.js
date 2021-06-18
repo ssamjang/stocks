@@ -22,7 +22,6 @@ export const SymbolContainer = ({data, navigation, watchList}) => {
 
   return(    
     <View>
-      {/* {console.log(dataSorted)} */}
       <FlatList
         data={dataSorted}
         renderItem={({item}) => (
@@ -51,8 +50,13 @@ export default function SearchScreen({ navigation }) {
    const [rawData, setRawData] = useState([])
    const [filteredData, setFilteredData] = useState([])
    const [search, setSearch] = useState('')
+  
+   async function getData() {
+     const dataCalled = await getStockData()
+     return dataCalled
+   }
 
-  const getStockData = () => {
+   async function getStockData() {
     fetch(`${ServerURL}`)
       .then((res) => res.json())
       .then(data => 
@@ -73,6 +77,7 @@ export default function SearchScreen({ navigation }) {
       })
   }
 
+
   const searchFilter = (searchText) => {
     if (searchText) {
       const newData = rawData.filter((item) => {
@@ -89,13 +94,15 @@ export default function SearchScreen({ navigation }) {
   }
 
   useEffect(() => {
+    // AsyncStorage.getItem("rawData")
+    //   // .then((stocks) => JSON.parse(stocks), getStockData())
+    //   .then((stocks) => JSON.parse(stocks), getData())
+    //   .then((parsedData) => {
+    //     setRawData(parsedData); 
+    //     setFilteredData(parsedData);
+    //   })
+    getData()
 
-    AsyncStorage.getItem("rawData")
-      .then((stocks) => JSON.parse(stocks), getStockData())
-      .then((parsedData) => {
-        setRawData(parsedData); 
-        setFilteredData(parsedData);
-      })
   }, []);
 
   return (
