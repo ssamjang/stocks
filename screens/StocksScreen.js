@@ -11,27 +11,30 @@ const API_KEY = '?apikey=7a453ad3eab49ac22bc22d18dd2675bb'
 const detailAPI = 'https://financialmodelingprep.com/api/v3/historical-price-full/';
 
 export const StockContainer = ({watchList, state, loading}) => {
+  console.log("=================WATCHLIST")
+  console.log(watchList)
+  console.log(state)
   if (state === null) {
     console.log('loading fail NULL')
     return <Text style={styles.symbols}>LOADING</Text>
+  // } else if (Object.keys(state).length === watchList.symbols.length){
   } else if (Object.keys(state).length === watchList.symbols.length){
       return(
         <FlatList
+          // data={watchList.symbols}
           data={watchList.symbols}
           renderItem={({item}) => (
             <View style={styles.stockDetail}>
               <Text style={styles.symbol}>
                 {item}
-                {/* {console.log('-----------------inside----------START--')}
-                {console.log(item)}
-                {console.log(state)}
-                {console.log('-----------------inside---------END--')} */}
-                {/* {state[item].close} */}
               </Text>
               <Text style={styles.symbol}>
                 {state[item].close}
               </Text>
-              <Text style={styles.symbol}>
+              <Text style={[
+                styles.percentage,
+                {backgroundColor: getPercentageColour(state[item].changePercent)}
+                ]}>
                 {state[item].changePercent}
               </Text>
             </View>
@@ -41,12 +44,17 @@ export const StockContainer = ({watchList, state, loading}) => {
       )
     } else {
       console.log('loading fail END')
-
       return <Text style={styles.symbols}>LOADING EEEEEND</Text>
     }   
   }
 
-
+function getPercentageColour(value) {
+  if (value >= 0) {
+    return 'green'
+  } else {
+    return 'red'
+  }
+}
 
 export default function StocksScreen({route}) {
   const { ServerURL, watchList } = useStocksContext();
@@ -65,9 +73,6 @@ export default function StocksScreen({route}) {
     setState({})
   };
 
-
-
-
   useEffect(() => {
     if (watchList && watchList.symbols) {
       // console.log(watchList)
@@ -84,7 +89,12 @@ export default function StocksScreen({route}) {
             .then((data => {
               let newData = {}
               let mergedData = {}
+
               newData[symbol] = data.historical[0]
+              // // EXP===============================================
+              // newData[symbol] = data.historical
+              // console.log(newData)
+              // // EXP===============================================
               mergedData = {...state, ...newData}
               return mergedData
             }))
@@ -111,6 +121,7 @@ export default function StocksScreen({route}) {
           Stocks
         </Text>
         <TouchableOpacity
+          // onPress={() => clearStorage()}
           onPress={() => clearStorage()}
         >
           <Text style={styles.test}>CLEAR STORAGE</Text>
@@ -129,6 +140,11 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       paddingVertical: 10,
     },
+    percentage: {
+      color: "#fff",
+      fontSize: scaleSize(25),
+      // backgroundColor: 'red'
+    },
     stockDetail: {
       flex: 1,
       flexDirection: "row",
@@ -136,8 +152,7 @@ const styles = StyleSheet.create({
       fontSize: scaleSize(30),
       padding: 10,
       // justifyContent: "",
-    }
-    ,
+    },
     symbol: {
       color: "#fff",
       fontSize: scaleSize(30),
