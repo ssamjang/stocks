@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, View, 
-TouchableOpacity, AsyncStorage, FlatList} from 'react-native';
+TouchableOpacity, AsyncStorage, FlatList, TouchableOpacityBase} from 'react-native';
 import { useStocksContext } from '../contexts/StocksContext';
 import { scaleSize } from '../constants/Layout';
 
@@ -10,10 +10,10 @@ const API_KEY = '?apikey=7a453ad3eab49ac22bc22d18dd2675bb'
 
 const detailAPI = 'https://financialmodelingprep.com/api/v3/historical-price-full/';
 
-export const StockContainer = ({watchList, state, loading}) => {
-  console.log("=================WATCHLIST")
-  console.log(watchList)
-  console.log(state)
+export const StockContainer = ({watchList, state}) => {
+  // console.log("=================WATCHLIST")
+  // console.log(watchList)
+  // console.log(state)
   if (state === null) {
     console.log('loading fail NULL')
     return <Text style={styles.symbols}>LOADING</Text>
@@ -29,13 +29,13 @@ export const StockContainer = ({watchList, state, loading}) => {
                 {item}
               </Text>
               <Text style={styles.symbol}>
-                {state[item].close}
+                {state[item].close.toFixed(2)}
               </Text>
               <Text style={[
                 styles.percentage,
                 {backgroundColor: getPercentageColour(state[item].changePercent)}
                 ]}>
-                {state[item].changePercent}
+                {state[item].changePercent.toFixed(2)}%
               </Text>
             </View>
           )}
@@ -53,6 +53,56 @@ function getPercentageColour(value) {
     return 'green'
   } else {
     return 'red'
+  }
+}
+
+export const TableRow = ({heading, value}) => {
+  return(
+    <View style={styles.tableRow}>
+            <Text style={styles.rowKey}>
+              {heading}
+            </Text>
+            <Text style={styles.rowVal}>
+              {value}
+            </Text>
+          </View>
+  )
+}
+
+export const StockTable = ({state, watchList}) => {
+  // if (true) {
+  if (watchList.selectedStock && state && state[watchList.selectedStock]) {
+    return (
+      <View style={styles.table}>
+        <Text style={styles.tableHeader}>
+          {watchList.selectedStock}
+        </Text>
+        <View style={styles.tableContainer}>
+          <TableRow
+            heading="OPEN"
+            value={state[watchList.selectedStock].open}
+          />
+          <TableRow
+            heading="CLOSE"
+            value={state[watchList.selectedStock].close}
+          />
+          <TableRow
+            heading="LOW"
+            value={state[watchList.selectedStock].low}
+          />
+          <TableRow
+            heading="HIGH"
+            value={state[watchList.selectedStock].high}
+          />
+          <TableRow
+            heading="VOLUME"
+            value={state[watchList.selectedStock].volume}
+          />
+        </View>
+      </View>
+    )
+  } else{
+    return null
   }
 }
 
@@ -99,7 +149,6 @@ export default function StocksScreen({route}) {
               return mergedData
             }))
             .then(data => {
-              // setState((oldState) => ({ ...oldState, data}))
               setState(data)
               AsyncStorage.setItem("stockData", JSON.stringify(data))
               setLoading(false)
@@ -121,12 +170,12 @@ export default function StocksScreen({route}) {
           Stocks
         </Text>
         <TouchableOpacity
-          // onPress={() => clearStorage()}
           onPress={() => clearStorage()}
         >
           <Text style={styles.test}>CLEAR STORAGE</Text>
         </TouchableOpacity>
         <StockContainer watchList={watchList} state={state} loading={loading}/>
+        <StockTable state={state} watchList={watchList}/>
     </View>
   );
 }
@@ -157,6 +206,42 @@ const styles = StyleSheet.create({
       color: "#fff",
       fontSize: scaleSize(30),
       flex: 1,
+    },
+    table: {
+      position: "relative",
+      color: "#fff",
+      bottom: 0,
+    },
+    tableContainer: {
+      flexDirection: "row",
+      flexWrap: 'wrap',
+    },
+    rowKey: { 
+      fontSize: scaleSize(20),
+      color: "grey"
+    },
+    rowVal: { 
+      fontSize: scaleSize(20),
+      color: "#fff"
+    },
+    tableHeader: {
+      color: "#fff",
+      fontSize: scaleSize(20),
+      textAlign: "center",
+      backgroundColor: "#222",
+      borderColor: "#eee",
+      borderWidth: 0.2,
+      paddingVertical: 10,
+    },
+    tableRow: {
+      flexDirection: "row",
+      color: "#fff",
+      width: "50%",
+      justifyContent: "space-between",
+      // fontSize: scaleSize(40),
+      padding: 10,
+      borderColor: "#fff",
+      borderWidth: 0.2,
     },
     test: {
       backgroundColor: '#DDDD',
