@@ -11,7 +11,6 @@ import {
   TouchableHighlight} from 'react-native';
 import { useStocksContext } from '../contexts/StocksContext';
 import { scaleSize } from '../constants/Layout';
-import { Ionicons } from '@expo/vector-icons';
 
 
 export const SymbolContainer = ({data, navigation, watchList}) => {
@@ -98,8 +97,6 @@ export default function SearchScreen({ navigation }) {
   useEffect(() => {
     AsyncStorage.getItem("rawData")
       .then((stocks) => JSON.parse(stocks))
-      // .then((stocks) => JSON.parse(stocks), getStockData())
-      // .then((stocks) => JSON.parse(stocks), getData())
       .then((parsedData) => {
         setRawData(parsedData); 
         setFilteredData(parsedData);
@@ -111,7 +108,6 @@ export default function SearchScreen({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        {/* <Text style={styles.searchContainer}>Search for stock</Text> */}
         <View>
           <Text style={styles.searchContainer}>Search for stock</Text>
           <TextInput

@@ -39,7 +39,6 @@ export const useStocksContext = () => {
         AsyncStorage.setItem("symbols", JSON.stringify(updatedList))
       }
     } else {
-      // No stock exists in the state. add to state
       setState((oldState) => ({...oldState, symbols: [newSymbol]}))
       AsyncStorage.setItem("symbols", JSON.stringify([newSymbol]))
     }

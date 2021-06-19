@@ -206,14 +206,22 @@ export default function StocksScreen({route}) {
         >
           <Text style={styles.clearList}>Clear Watch List</Text>
         </TouchableOpacity>
-
-        <StockContainer 
+        <View style={styles.dataContainer}>
+          <StockContainer 
+            watchList={watchList} 
+            state={state} 
+            loading={loading}
+            selectStock={selectStock}
+          />
+          <StockTable state={state} watchList={watchList}/>
+        </View>
+        {/* <StockContainer 
           watchList={watchList} 
           state={state} 
           loading={loading}
           selectStock={selectStock}
         />
-        <StockTable state={state} watchList={watchList}/>
+        <StockTable state={state} watchList={watchList}/> */}
     </View>
   );
 }
@@ -294,4 +302,8 @@ const styles = StyleSheet.create({
       fontSize: scaleSize(20),
       padding: 10,
     },
+    dataContainer: {
+      // overflow: 'hidden'
+      height: '80%'
+    }
   });
