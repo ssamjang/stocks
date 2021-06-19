@@ -15,10 +15,9 @@ import { Ionicons } from '@expo/vector-icons';
 
 
 export const SymbolContainer = ({data, navigation, watchList}) => {
-  // const dataVal = Object.values(data)
-  // const dataList = dataVal[0]
   // // sort list by symbol
-  const dataSorted = data.sort((a,b) => (a.symbol > b.symbol) ? 1:-1)
+  if (data !== null){
+    const dataSorted = data.sort((a,b) => (a.symbol > b.symbol) ? 1:-1)
 
   return(    
     <View>
@@ -43,6 +42,9 @@ export const SymbolContainer = ({data, navigation, watchList}) => {
       </FlatList>
     </View>
   )
+  } else {
+    return null
+  }
 }
 
 export default function SearchScreen({ navigation }) {
@@ -94,13 +96,14 @@ export default function SearchScreen({ navigation }) {
   }
 
   useEffect(() => {
-    // AsyncStorage.getItem("rawData")
-    //   // .then((stocks) => JSON.parse(stocks), getStockData())
-    //   .then((stocks) => JSON.parse(stocks), getData())
-    //   .then((parsedData) => {
-    //     setRawData(parsedData); 
-    //     setFilteredData(parsedData);
-    //   })
+    AsyncStorage.getItem("rawData")
+      .then((stocks) => JSON.parse(stocks))
+      // .then((stocks) => JSON.parse(stocks), getStockData())
+      // .then((stocks) => JSON.parse(stocks), getData())
+      .then((parsedData) => {
+        setRawData(parsedData); 
+        setFilteredData(parsedData);
+      })
     getData()
 
   }, []);
@@ -108,8 +111,9 @@ export default function SearchScreen({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <Text style={styles.searchContainer}>Search for stock</Text>
+        {/* <Text style={styles.searchContainer}>Search for stock</Text> */}
         <View>
+          <Text style={styles.searchContainer}>Search for stock</Text>
           <TextInput
             style={styles.searchInput}
             placeholder="Search"
@@ -132,6 +136,9 @@ export default function SearchScreen({ navigation }) {
 const styles = StyleSheet.create({
 // FixMe: add styles here ...
 // use scaleSize(x) to adjust sizes for small/large screens
+container: {
+  textAlign: 'center',
+},
 test: {
   backgroundColor: '#DDDD',
   alignContent: 'center',
@@ -143,7 +150,9 @@ searchHeader: {
 },
 searchContainer: {
   backgroundColor: "#111",
-  color: "#fff"
+  color: "#fff",
+  fontSize: scaleSize(30),
+  textAlign: 'center',
 },
 searchInput: {
   backgroundColor: "#fff",
@@ -151,7 +160,6 @@ searchInput: {
   margin: 20,
   fontSize: scaleSize(20),
   height: 40,
-
 },
 symbol: {
   color: "#fff",
@@ -168,7 +176,5 @@ stockItem: {
   padding: 10,
   backgroundColor: "#000",
   borderBottomColor: "#ddd",
-  //borderBottomWidth: 0.2,
-  //borderBottomWidth: 1,
-}
+},
 });

@@ -23,7 +23,7 @@ export const useStocksContext = () => {
   // can put more code here
 
   function addToStockInfo(stock) {
-    setState((oldState) => ({...oldState, stock}))
+    setState((oldState) => ({...oldState, stockInfo: stock}))
     AsyncStorage.setItem("stockData", JSON.stringify(state))
   }
 
@@ -67,13 +67,22 @@ export const useStocksContext = () => {
           setState((oldState) => ({...oldState, selectedStock}))
         }
       })
+    AsyncStorage.getItem("stockData")
+      .then((stocks) => JSON.parse(stocks))
+      .then((stockInfo) => {
+        if (stockInfo){
+          setState((oldState) => ({...oldState, stockInfo: stockInfo}))
+        }
+      })
+  
   }, []);
 
   return { 
     //ServerURL: 'http://131.181.190.87:3001', 
-    ServerURL: 'https://financialmodelingprep.com/api/v3/nasdaq_constituent?apikey=b888e1d7c9684be0722f58f601b0f582',
+    // ServerURL: 'https://financialmodelingprep.com/api/v3/nasdaq_constituent?apikey=b888e1d7c9684be0722f58f601b0f582',
     // ServerURL: 'https://financialmodelingprep.com/api/v3/nasdaq_constituent?apikey=15b6b386127d855314ed8c99bff64f8a',
     // ServerURL: 'https://financialmodelingprep.com/api/v3/nasdaq_constituent?apikey=7a453ad3eab49ac22bc22d18dd2675bb',
+    ServerURL: 'https://financialmodelingprep.com/api/v3/nasdaq_constituent?apikey=e067f49be6b7355047054ccf03bd6d1a' ,
     watchList: state,  
     addToWatchlist,
     selectStock,
