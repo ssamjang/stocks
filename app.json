@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "IFN666 Stocks",
-    "slug": "IFN666Stocks",
+    "name": "Stocks assignment",
+    "slug": "capstonestock",
     "platforms": [
       "ios",
       "android",
@@ -25,6 +25,6 @@
     "ios": {
       "supportsTablet": true
     },
-    "description": "Stock Market App for IFN666 at QUT"
+    "description": ""
   }
 }
